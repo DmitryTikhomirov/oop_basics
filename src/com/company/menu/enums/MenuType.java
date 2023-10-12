@@ -1,33 +1,41 @@
 package com.company.menu.enums;
 
-import com.company.menu.dialog.ClientDialog;
-import com.company.menu.dialog.ManagerDialog;
+import com.company.logger.Logger;
+import com.company.menu.dialog.ClientStartDialog;
+import com.company.menu.dialog.ManagerStartDialog;
+import com.company.records.writting.TxtFileWriting;
+import com.company.service.UserInputService;
+import com.company.service.impl.ClientServiceImpl;
 
 public enum MenuType {
-    MANAGER("Manager", 1){
+    MANAGER("Manager", 1) {
         @Override
-        public int showMenu() {
-            return new ManagerDialog().show();
+        public int showMenu(Logger logger, UserInputService userInputService) {
+            return new ManagerStartDialog().start();
         }
     },
-    CUSTOMER("Customer", 2){
+    CUSTOMER("Customer", 2) {
         @Override
-        public int showMenu() {
-            return new ClientDialog().show();
+        public int showMenu(Logger logger, UserInputService userInputService) {
+            TxtFileWriting fileWriting = new TxtFileWriting();
+            ClientServiceImpl clientService = new ClientServiceImpl(fileWriting, userInputService, logger);
+            ClientStartDialog clientStartDialog = new ClientStartDialog(clientService, logger, userInputService);
+
+            return clientStartDialog.start();
         }
     },
-    EXIT("Exit", 0){
+    EXIT("Exit", 0) {
         @Override
-        public int showMenu() {
+        public int showMenu(Logger logger, UserInputService userInputService) {
             System.exit(0);
             return 0;
         }
     };
 
-    abstract public int showMenu();
+    public abstract int showMenu(Logger logger, UserInputService userInputService);
 
-    private String name;
-    private int id;
+    private final String name;
+    private final int id;
 
     MenuType(String name, int id) {
         this.name = name;
@@ -41,7 +49,6 @@ public enum MenuType {
     public int getId() {
         return id;
     }
-
 
 
 }

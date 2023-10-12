@@ -1,45 +1,45 @@
 package com.company.menu.dialog;
 
 import com.company.config.PropertyUtils;
+import com.company.logger.Logger;
 import com.company.menu.enums.ClientMenuType;
 import com.company.menu.enums.MenuType;
-import com.company.models.Client;
 import com.company.service.ClientService;
+import com.company.service.UserInputService;
+import com.company.service.impl.ClientServiceImpl;
 
 import static com.company.constants.Constants.CONON;
 import static com.company.constants.Constants.SPACE;
 
-public class ClientDialog extends AbstractDialog {
+public class ClientStartDialog implements StartDialog {
 
-    public ClientService clientService = new ClientService();
+    private final ClientService clientService;
+    private final Logger logger;
+    private final UserInputService userInputService;
 
-    public ClientDialog() {
-        super();
-    }
-
-    public int show() {
-        return start();
+    public ClientStartDialog(ClientService clientService, Logger logger, UserInputService userInputService) {
+        this.clientService = clientService;
+        this.logger = logger;
+        this.userInputService = userInputService;
     }
 
     @Override
-    int start() {
+    public int start() {
         ClientMenuType[] clientMenuType = ClientMenuType.values();
         for (ClientMenuType clientMenuType1 : clientMenuType) {
-            logger.info(clientMenuType1.getId() + CONON + SPACE +  clientMenuType1.getName());
+            logger.info(clientMenuType1.getId() + CONON + SPACE + clientMenuType1.getName());
         }
         logger.info(PropertyUtils.getProperty("messages.choose.your.option"));
         int optionNumber = -1;
         while (optionNumber != 0) {
-            optionNumber = Integer.parseInt(getUserInput());
+            optionNumber = userInputService.getInteger();
             if (optionNumber > 0 && optionNumber <= clientMenuType.length) {
                 switch (optionNumber) {
                     case 1 -> {
                         logger.info(PropertyUtils.getProperty("messages.client.option.1"));
-                        Client client = clientService.createClient("name", "surname", "email", 12);
                     }
                     case 2 -> {
                         logger.info(PropertyUtils.getProperty("messages.client.option.2"));
-
                     }
                     case 3 -> {
                         logger.info(PropertyUtils.getProperty("messages.client.option.3"));
@@ -51,7 +51,7 @@ public class ClientDialog extends AbstractDialog {
                 }
             } else {
                 logger.info(PropertyUtils.getProperty("messages.client.option.4"));
-                optionNumber = MenuType.EXIT.showMenu();
+                optionNumber = MenuType.EXIT.showMenu(logger, userInputService);
 
             }
         }

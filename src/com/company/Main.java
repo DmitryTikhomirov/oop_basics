@@ -1,10 +1,12 @@
 package com.company;
 
-import com.company.menu.dialog.MainDialog;
+import com.company.logger.Logger;
+import com.company.menu.dialog.MainStartDialog;
+import com.company.service.impl.UserInputServiceImpl;
 
 public class Main {
     public static void main(String[] args) {
-        MainDialog mainDialog = new MainDialog();
-        mainDialog.show();
+        MainStartDialog mainDialog = new MainStartDialog(Logger.getInstance(), new UserInputServiceImpl());
+        mainDialog.start();
     }
 }
